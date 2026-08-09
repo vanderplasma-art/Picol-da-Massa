@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Venda de Picolé</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    input, button { margin: 5px; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Controle de Vendas de Picolé</h1>
+
+  <label>Sabor: <input id="sabor" type="text"></label>
+  <label>Preço (R$): <input id="preco" type="number" step="0.01"></label>
+  <label>Quantidade: <input id="quantidade" type="number"></label>
+  <button onclick="registrarVenda()">Registrar Venda</button>
+
+  <table id="tabela">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Sabor</th>
+        <th>Qtd</th>
+        <th>Preço Unitário</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Total do Caixa: R$ <span id="caixa">0.00</span></h2>
+
+  <script>
+    let caixa = 0;
+    function registrarVenda() {
+      const sabor = document.getElementById('sabor').value;
+      const preco = parseFloat(document.getElementById('preco').value);
+      const qtd = parseInt(document.getElementById('quantidade').value);
+      if (!sabor || isNaN(preco) || isNaN(qtd)) {
+        alert("Preencha todos os campos corretamente!");
+        return;
+      }
+      const total = preco * qtd;
+      caixa += total;
+
+      const tabela = document.getElementById('tabela').querySelector('tbody');
+      const linha = tabela.insertRow();
+      linha.insertCell().textContent = new Date().toLocaleString();
+      linha.insertCell().textContent = sabor;
+      linha.insertCell().textContent = qtd;
+      linha.insertCell().textContent = preco.toFixed(2);
+      linha.insertCell().textContent = total.toFixed(2);
+
+      document.getElementById('caixa').textContent = caixa.toFixed(2);
+
+      // limpar campos
+      document.getElementById('sabor').value = "";
+      document.getElementById('preco').value = "";
+      document.getElementById('quantidade').value = "";
+    }
+  </script>
+</body>
+</html>
