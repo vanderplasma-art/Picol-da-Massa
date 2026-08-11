@@ -341,6 +341,11 @@
       background-color: #ff5252;
     }
 
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
     /* Total */
     .total-section {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -357,6 +362,129 @@
       font-size: 32px;
       display: block;
       margin-top: 10px;
+    }
+
+    /* Gerenciar Sabores */
+    .sabores-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .sabor-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sabor-card-info {
+      flex: 1;
+    }
+
+    .sabor-card-info h3 {
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .sabor-card-info p {
+      color: #667eea;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .sabor-card-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .sabor-card-actions button {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .btn-add-sabor {
+      background: white;
+      border: 2px dashed #667eea;
+      color: #667eea;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+
+    .btn-add-sabor:hover {
+      background: #f0f0f0;
+      transform: scale(1.02);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-content h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .modal-form input {
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+    }
+
+    .btn-cancel {
+      background-color: #ccc;
+    }
+
+    .btn-cancel:hover {
+      background-color: #bbb;
     }
 
     /* Histórico */
@@ -475,7 +603,15 @@
         gap: 10px;
       }
 
+      .header-buttons {
+        flex-wrap: wrap;
+      }
+
       .charts-container {
+        grid-template-columns: 1fr;
+      }
+
+      .sabores-grid {
         grid-template-columns: 1fr;
       }
 
@@ -532,6 +668,7 @@
           </div>
           <div class="header-buttons">
             <button class="btn-header ativo" onclick="mostrarAbas('vendas')">🏠 Home</button>
+            <button class="btn-header" onclick="mostrarAbas('sabores')">⚙️ Sabores</button>
             <button class="btn-header" onclick="mostrarAbas('historico')">📊 Histórico</button>
           </div>
         </div>
@@ -543,7 +680,7 @@
         <div class="input-group">
           <label>
             <span>Sabor</span>
-            <select id="sabor">
+            <select id="sabor" onchange="preencherPreco()">
               <option value="">Selecione um sabor</option>
             </select>
           </label>
@@ -580,6 +717,17 @@
         <div class="total-section">
           Total do Caixa: 
           <span>R$ <span id="caixa">0.00</span></span>
+        </div>
+      </div>
+
+      <!-- Aba Gerenciar Sabores -->
+      <div id="sabores" class="content">
+        <h2 style="margin-bottom: 20px; color: #333;">Gerenciar Sabores</h2>
+        
+        <div class="sabores-grid" id="saboresGrid"></div>
+
+        <div class="btn-add-sabor" onclick="abrirModalAdicionarSabor()">
+          ➕ Adicionar Novo Sabor
         </div>
       </div>
 
@@ -626,19 +774,34 @@
     </div>
   </div>
 
+  <!-- MODAL ADICIONAR SABOR -->
+  <div id="modalSabor" class="modal">
+    <div class="modal-content">
+      <h2>Adicionar Novo Sabor</h2>
+      <form class="modal-form" onsubmit="adicionarSabor(event)">
+        <input type="text" id="nomeSabor" placeholder="Nome do sabor" required>
+        <input type="number" id="precoSabor" step="0.01" placeholder="Preço (R$)" required>
+        <div class="modal-buttons">
+          <button type="submit">Adicionar</button>
+          <button type="button" class="btn-cancel" onclick="fecharModalSabor()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
-    // Lista de sabores padrão
-    const saboresPadrao = [
-      "Morango",
-      "Chocolate",
-      "Limão",
-      "Açaí",
-      "Maracujá",
-      "Melancia",
-      "Abacaxi",
-      "Coco",
-      "Manga",
-      "Pistache"
+    // Lista de sabores padrão com preços
+    let saboresCadastrados = [
+      { nome: "Morango", preco: 3.00 },
+      { nome: "Chocolate", preco: 3.00 },
+      { nome: "Limão", preco: 2.50 },
+      { nome: "Açaí", preco: 4.00 },
+      { nome: "Maracujá", preco: 3.00 },
+      { nome: "Melancia", preco: 2.50 },
+      { nome: "Abacaxi", preco: 3.00 },
+      { nome: "Coco", preco: 3.00 },
+      { nome: "Manga", preco: 3.50 },
+      { nome: "Pistache", preco: 4.50 }
     ];
 
     let usuariosPermitidos = [];
@@ -650,6 +813,7 @@
     // Inicializar aplicação
     function inicializarApp() {
       carregarUsuariosPermitidos();
+      carregarSaboresCadastrados();
       verificarLogin();
     }
 
@@ -664,6 +828,19 @@
     // Salvar usuários permitidos
     function salvarUsuariosPermitidos() {
       localStorage.setItem('usuariosPermitidos', JSON.stringify(usuariosPermitidos));
+    }
+
+    // Carregar sabores do localStorage
+    function carregarSaboresCadastrados() {
+      const sabores = localStorage.getItem('saboresCadastrados');
+      if (sabores) {
+        saboresCadastrados = JSON.parse(sabores);
+      }
+    }
+
+    // Salvar sabores no localStorage
+    function salvarSaboresCadastrados() {
+      localStorage.setItem('saboresCadastrados', JSON.stringify(saboresCadastrados));
     }
 
     // Fazer login
@@ -734,8 +911,9 @@
 
     // Inicializar sistema
     function inicializarSistema() {
-      preencherMenu();
+      preencherMenuLateral();
       preencherSelectSabores();
+      atualizarGridSabores();
       carregarDados();
     }
 
@@ -748,25 +926,29 @@
       
       if (aba === 'vendas') {
         document.querySelectorAll('.btn-header')[0].classList.add('ativo');
-      } else if (aba === 'historico') {
+      } else if (aba === 'sabores') {
         document.querySelectorAll('.btn-header')[1].classList.add('ativo');
+        atualizarGridSabores();
+      } else if (aba === 'historico') {
+        document.querySelectorAll('.btn-header')[2].classList.add('ativo');
         atualizarHistorico();
       }
     }
 
     // Preencher menu lateral
-    function preencherMenu() {
+    function preencherMenuLateral() {
       const menu = document.getElementById('saborMenu');
       menu.innerHTML = '';
       
-      saboresPadrao.forEach(sabor => {
+      saboresCadastrados.forEach(sabor => {
         const div = document.createElement('div');
         div.className = 'sabor-item';
-        div.textContent = sabor;
+        div.textContent = sabor.nome;
         div.onclick = () => {
           document.querySelectorAll('.sabor-item').forEach(el => el.classList.remove('ativo'));
           div.classList.add('ativo');
-          document.getElementById('sabor').value = sabor;
+          document.getElementById('sabor').value = sabor.nome;
+          preencherPreco();
         };
         menu.appendChild(div);
       });
@@ -777,11 +959,96 @@
       const select = document.getElementById('sabor');
       select.innerHTML = '<option value="">Selecione um sabor</option>';
       
-      saboresPadrao.forEach(sabor => {
+      saboresCadastrados.forEach(sabor => {
         const option = document.createElement('option');
-        option.value = sabor;
-        option.textContent = sabor;
+        option.value = sabor.nome;
+        option.textContent = sabor.nome;
         select.appendChild(option);
+      });
+    }
+
+    // Preencher preço automaticamente
+    function preencherPreco() {
+      const saborNome = document.getElementById('sabor').value;
+      const sabor = saboresCadastrados.find(s => s.nome === saborNome);
+      
+      if (sabor) {
+        document.getElementById('preco').value = sabor.preco.toFixed(2);
+      }
+    }
+
+    // Abrir modal para adicionar sabor
+    function abrirModalAdicionarSabor() {
+      document.getElementById('modalSabor').classList.add('show');
+      document.getElementById('nomeSabor').focus();
+    }
+
+    // Fechar modal
+    function fecharModalSabor() {
+      document.getElementById('modalSabor').classList.remove('show');
+      document.getElementById('nomeSabor').value = '';
+      document.getElementById('precoSabor').value = '';
+    }
+
+    // Adicionar sabor
+    function adicionarSabor(event) {
+      event.preventDefault();
+      const nome = document.getElementById('nomeSabor').value.trim();
+      const preco = parseFloat(document.getElementById('precoSabor').value);
+
+      if (!nome || isNaN(preco) || preco <= 0) {
+        alert('Preencha os campos corretamente!');
+        return;
+      }
+
+      // Verificar se sabor já existe
+      if (saboresCadastrados.find(s => s.nome.toLowerCase() === nome.toLowerCase())) {
+        alert('Este sabor já existe!');
+        return;
+      }
+
+      // Adicionar novo sabor
+      saboresCadastrados.push({ nome, preco });
+      salvarSaboresCadastrados();
+
+      // Atualizar tela
+      preencherMenuLateral();
+      preencherSelectSabores();
+      atualizarGridSabores();
+
+      // Fechar modal
+      fecharModalSabor();
+    }
+
+    // Deletar sabor
+    function deletarSabor(nome) {
+      if (confirm(`Deletar o sabor "${nome}"?`)) {
+        saboresCadastrados = saboresCadastrados.filter(s => s.nome !== nome);
+        salvarSaboresCadastrados();
+        preencherMenuLateral();
+        preencherSelectSabores();
+        atualizarGridSabores();
+      }
+    }
+
+    // Atualizar grid de sabores
+    function atualizarGridSabores() {
+      const grid = document.getElementById('saboresGrid');
+      grid.innerHTML = '';
+
+      saboresCadastrados.forEach(sabor => {
+        const card = document.createElement('div');
+        card.className = 'sabor-card';
+        card.innerHTML = `
+          <div class="sabor-card-info">
+            <h3>${sabor.nome}</h3>
+            <p>R$ ${sabor.preco.toFixed(2)}</p>
+          </div>
+          <div class="sabor-card-actions">
+            <button class="btn-small btn-delete" onclick="deletarSabor('${sabor.nome}')">🗑️</button>
+          </div>
+        `;
+        grid.appendChild(card);
       });
     }
 
