@@ -1,0 +1,29 @@
+<!-- snippets/payment-received.html -->
+<!--
+  Insira este trecho DENTRO do formulário de venda (<form>...</form>), no local onde outros
+  campos do pedido estão. Ele adiciona um campo `payment_received` (radio) com as opções PIX e Dinheiro.
+  - Se o seu formulário for enviado normalmente (submit padrão), o valor selecionado será enviado junto.
+  - Se você enviar o formulário via JS (fetch/XHR), leia o valor com JS antes de montar o payload.
+-->
+
+<fieldset id="payment-received-fieldset">
+  <legend>Como você recebeu o pagamento?</legend>
+  <label><input type="radio" name="payment_received" value="pix" checked> PIX</label>
+  <label><input type="radio" name="payment_received" value="dinheiro"> Dinheiro</label>
+</fieldset>
+
+<!-- Opcional: helper JS (copiar/colar dentro da página ou em arquivo .js separado)
+     Uso: se seu fluxo usar fetch para enviar o pedido, cole essa função e chame getPaymentReceived(form)
+-->
+<script>
+function getPaymentReceived(formElement) {
+  // retorna string: 'pix' ou 'dinheiro' (ou null se nenhum selecionado)
+  const checked = formElement.querySelector('input[name="payment_received"]:checked');
+  return checked ? checked.value : null;
+}
+
+// Exemplo: anexar o valor ao payload antes de enviar via fetch
+// const form = document.getElementById('saleForm');
+// const payload = { /* outros campos */ };
+// payload.payment_received = getPaymentReceived(form);
+</script>
