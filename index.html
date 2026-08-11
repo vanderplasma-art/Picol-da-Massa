@@ -110,20 +110,6 @@
       color: #667eea;
     }
 
-    .btn-home {
-      background-color: #FFD700;
-      color: #333;
-    }
-
-    .btn-home:hover {
-      background-color: #FFC700;
-    }
-
-    .btn-home.ativo {
-      background-color: #FFD700;
-      color: #333;
-    }
-
     /* Conteúdo dinâmico */
     .content {
       flex: 1;
@@ -132,60 +118,6 @@
 
     .content.ativo {
       display: block;
-    }
-
-    /* Home */
-    .home-container {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-    }
-
-    .welcome-box {
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .welcome-box h2 {
-      font-size: 32px;
-      color: #667eea;
-      margin-bottom: 15px;
-    }
-
-    .welcome-box p {
-      font-size: 16px;
-      color: #666;
-      margin-bottom: 10px;
-    }
-
-    .quick-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 20px;
-      margin-top: 30px;
-    }
-
-    .stat-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .stat-card h3 {
-      font-size: 14px;
-      opacity: 0.9;
-      margin-bottom: 10px;
-    }
-
-    .stat-card .value {
-      font-size: 32px;
-      font-weight: bold;
     }
 
     /* Cadastro */
@@ -427,10 +359,6 @@
         grid-template-columns: 1fr;
       }
 
-      .quick-stats {
-        grid-template-columns: 1fr;
-      }
-
       th, td {
         padding: 8px;
         font-size: 12px;
@@ -461,41 +389,14 @@
           <p>Gerencie suas vendas de forma prática e eficiente</p>
         </div>
         <div class="header-buttons">
-          <button class="btn-header btn-home ativo" onclick="mostrarAbas('home')">🏠 Home</button>
-          <button class="btn-header" onclick="mostrarAbas('vendas')">📝 Cadastro</button>
+          <button class="btn-header ativo" onclick="mostrarAbas('vendas')">🏠 Home</button>
           <button class="btn-header" onclick="mostrarAbas('historico')">📊 Histórico</button>
         </div>
       </div>
     </div>
 
-    <!-- Aba Home -->
-    <div id="home" class="content ativo">
-      <div class="home-container">
-        <div class="welcome-box">
-          <h2>Bem-vindo! 🍦</h2>
-          <p>Seu sistema de controle de vendas de picolé está ativo e pronto para uso.</p>
-          <p style="font-size: 14px; color: #999;">Use os botões acima para navegar entre as seções</p>
-        </div>
-
-        <div class="quick-stats">
-          <div class="stat-card">
-            <h3>Total de Vendas</h3>
-            <div class="value" id="statVendas">0</div>
-          </div>
-          <div class="stat-card">
-            <h3>Sabores Únicos</h3>
-            <div class="value" id="statSabores">0</div>
-          </div>
-          <div class="stat-card">
-            <h3>Total em Caixa</h3>
-            <div class="value" id="statCaixa">R$ 0.00</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Aba Cadastro -->
-    <div id="vendas" class="content">
+    <!-- Aba Vendas (Home) -->
+    <div id="vendas" class="content ativo">
       <!-- Inputs -->
       <div class="input-group">
         <label>
@@ -605,7 +506,6 @@
       preencherMenu();
       preencherSelectSabores();
       carregarDados();
-      atualizarHome();
     }
 
     // Mostrar abas
@@ -618,25 +518,12 @@
       document.getElementById(aba).classList.add('ativo');
       
       // Ativar botão clicado
-      if (aba === 'home') {
-        document.querySelector('.btn-home').classList.add('ativo');
-        atualizarHome();
-      } else if (aba === 'vendas') {
-        document.querySelectorAll('.btn-header')[1].classList.add('ativo');
+      if (aba === 'vendas') {
+        document.querySelectorAll('.btn-header')[0].classList.add('ativo');
       } else if (aba === 'historico') {
-        document.querySelectorAll('.btn-header')[2].classList.add('ativo');
+        document.querySelectorAll('.btn-header')[1].classList.add('ativo');
         atualizarHistorico();
       }
-    }
-
-    // Atualizar página Home
-    function atualizarHome() {
-      const totalVendas = vendas.length;
-      const saborUnicos = new Set(vendas.map(v => v.sabor)).size;
-
-      document.getElementById('statVendas').textContent = totalVendas;
-      document.getElementById('statSabores').textContent = saborUnicos;
-      document.getElementById('statCaixa').textContent = `R$ ${caixa.toFixed(2)}`;
     }
 
     // Preencher menu lateral
@@ -696,7 +583,6 @@
       vendas.push(venda);
       salvarDados();
       atualizarTabela();
-      atualizarHome();
 
       // Limpar campos
       document.getElementById('sabor').value = "";
@@ -713,7 +599,6 @@
         vendas = vendas.filter(v => v.id !== id);
         salvarDados();
         atualizarTabela();
-        atualizarHome();
       }
     }
 
