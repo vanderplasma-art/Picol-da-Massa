@@ -60,6 +60,8 @@
       flex: 1;
       padding: 30px;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
 
     .header {
@@ -67,15 +69,58 @@
       color: white;
       padding: 20px;
       border-radius: 10px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
     }
 
     .header h1 {
       font-size: 28px;
-      margin-bottom: 10px;
     }
 
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-header {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .btn-header:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    .btn-header.ativo {
+      background-color: white;
+      color: #667eea;
+    }
+
+    /* Conteúdo dinâmico */
+    .content {
+      flex: 1;
+      display: none;
+    }
+
+    .content.ativo {
+      display: block;
+    }
+
+    /* Cadastro */
     .input-group {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr auto;
@@ -194,6 +239,92 @@
       margin-top: 10px;
     }
 
+    /* Histórico */
+    .historico-header {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .period-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .period-btn {
+      padding: 10px 20px;
+      background-color: #ddd;
+      color: #333;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .period-btn:hover {
+      background-color: #ccc;
+    }
+
+    .period-btn.ativo {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .charts-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .chart-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .chart-box h3 {
+      margin-bottom: 15px;
+      color: #333;
+      text-align: center;
+    }
+
+    .sabor-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .sabor-stat:last-child {
+      border-bottom: none;
+    }
+
+    .stat-bar {
+      flex: 1;
+      height: 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 5px;
+      margin: 0 10px;
+      position: relative;
+    }
+
+    .stat-label {
+      min-width: 100px;
+      font-weight: bold;
+    }
+
+    .stat-value {
+      min-width: 60px;
+      text-align: right;
+    }
+
     /* Responsivo */
     @media (max-width: 768px) {
       body {
@@ -217,6 +348,15 @@
 
       button {
         align-self: auto;
+      }
+
+      .header-top {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .charts-container {
+        grid-template-columns: 1fr;
       }
 
       th, td {
@@ -243,50 +383,102 @@
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <h1>🍦 Controle de Vendas de Picolé</h1>
-      <p>Gerencie suas vendas de forma prática e eficiente</p>
+      <div class="header-top">
+        <div>
+          <h1>🍦 Controle de Vendas de Picolé</h1>
+          <p>Gerencie suas vendas de forma prática e eficiente</p>
+        </div>
+        <div class="header-buttons">
+          <button class="btn-header ativo" onclick="mostrarAbas('vendas')">📝 Cadastro</button>
+          <button class="btn-header" onclick="mostrarAbas('historico')">📊 Histórico</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Inputs -->
-    <div class="input-group">
-      <label>
-        <span>Sabor</span>
-        <select id="sabor">
-          <option value="">Selecione um sabor</option>
-        </select>
-      </label>
-      <label>
-        <span>Preço (R$)</span>
-        <input id="preco" type="number" step="0.01" placeholder="0.00">
-      </label>
-      <label>
-        <span>Quantidade</span>
-        <input id="quantidade" type="number" placeholder="1">
-      </label>
-      <button onclick="registrarVenda()">Registrar Venda</button>
+    <!-- Aba Cadastro -->
+    <div id="vendas" class="content ativo">
+      <!-- Inputs -->
+      <div class="input-group">
+        <label>
+          <span>Sabor</span>
+          <select id="sabor">
+            <option value="">Selecione um sabor</option>
+          </select>
+        </label>
+        <label>
+          <span>Preço (R$)</span>
+          <input id="preco" type="number" step="0.01" placeholder="0.00">
+        </label>
+        <label>
+          <span>Quantidade</span>
+          <input id="quantidade" type="number" placeholder="1">
+        </label>
+        <button onclick="registrarVenda()">Registrar Venda</button>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-container">
+        <table id="tabela">
+          <thead>
+            <tr>
+              <th>Data/Hora</th>
+              <th>Sabor</th>
+              <th>Qtd</th>
+              <th>Preço Unitário</th>
+              <th>Total</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- Total -->
+      <div class="total-section">
+        Total do Caixa: 
+        <span>R$ <span id="caixa">0.00</span></span>
+      </div>
     </div>
 
-    <!-- Tabela -->
-    <div class="table-container">
-      <table id="tabela">
-        <thead>
-          <tr>
-            <th>Data/Hora</th>
-            <th>Sabor</th>
-            <th>Qtd</th>
-            <th>Preço Unitário</th>
-            <th>Total</th>
-            <th>Ação</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <!-- Aba Histórico -->
+    <div id="historico" class="content">
+      <div class="historico-header">
+        <h2 style="margin-bottom: 15px; text-align: center;">📊 Análise de Vendas</h2>
+        <div class="period-buttons">
+          <button class="period-btn ativo" onclick="filtrarPeriodo('semana')">Última Semana</button>
+          <button class="period-btn" onclick="filtrarPeriodo('mes')">Mês Atual</button>
+          <button class="period-btn" onclick="filtrarPeriodo('tudo')">Todas as Vendas</button>
+        </div>
+      </div>
 
-    <!-- Total -->
-    <div class="total-section">
-      Total do Caixa: 
-      <span>R$ <span id="caixa">0.00</span></span>
+      <div class="charts-container">
+        <!-- Gráfico de quantidade por sabor -->
+        <div class="chart-box">
+          <h3>🍦 Quantidade Vendida por Sabor</h3>
+          <div id="chartQuantidade"></div>
+        </div>
+
+        <!-- Gráfico de receita por sabor -->
+        <div class="chart-box">
+          <h3>💰 Faturamento por Sabor</h3>
+          <div id="chartReceita"></div>
+        </div>
+      </div>
+
+      <!-- Tabela resumida -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Sabor</th>
+              <th>Total Vendido (Qtd)</th>
+              <th>Total Faturado (R$)</th>
+              <th>Média de Preço</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaResumo"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -307,13 +499,29 @@
 
     let caixa = 0;
     let vendas = [];
-    let saboresAdicionados = new Set();
+    let periodoAtual = 'semana';
 
     // Inicializar
     function inicializar() {
       preencherMenu();
       preencherSelectSabores();
       carregarDados();
+    }
+
+    // Mostrar abas
+    function mostrarAbas(aba) {
+      // Esconder todos os conteúdos
+      document.querySelectorAll('.content').forEach(el => el.classList.remove('ativo'));
+      document.querySelectorAll('.btn-header').forEach(el => el.classList.remove('ativo'));
+
+      // Mostrar conteúdo selecionado
+      document.getElementById(aba).classList.add('ativo');
+      event.target.classList.add('ativo');
+
+      // Se é histórico, atualizar gráficos
+      if (aba === 'historico') {
+        atualizarHistorico();
+      }
     }
 
     // Preencher menu lateral
@@ -363,7 +571,7 @@
 
       const venda = {
         id: Date.now(),
-        data: new Date().toLocaleString('pt-BR'),
+        data: new Date(),
         sabor,
         qtd,
         preco,
@@ -392,7 +600,7 @@
       }
     }
 
-    // Atualizar tabela
+    // Atualizar tabela de vendas
     function atualizarTabela() {
       const tbody = document.getElementById('tabela').querySelector('tbody');
       tbody.innerHTML = '';
@@ -405,7 +613,7 @@
 
       vendas.forEach(venda => {
         const linha = tbody.insertRow();
-        linha.insertCell().textContent = venda.data;
+        linha.insertCell().textContent = venda.data.toLocaleString('pt-BR');
         linha.insertCell().textContent = venda.sabor;
         linha.insertCell().textContent = venda.qtd;
         linha.insertCell().textContent = venda.preco.toFixed(2);
@@ -422,9 +630,113 @@
       document.getElementById('caixa').textContent = caixa.toFixed(2);
     }
 
+    // Filtrar por período
+    function filtrarPeriodo(periodo) {
+      periodoAtual = periodo;
+
+      document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('ativo'));
+      event.target.classList.add('ativo');
+
+      atualizarHistorico();
+    }
+
+    // Obter vendas filtradas
+    function getVendasFiltradas() {
+      const agora = new Date();
+      let dataLimite;
+
+      switch(periodoAtual) {
+        case 'semana':
+          dataLimite = new Date(agora.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case 'mes':
+          dataLimite = new Date(agora.getFullYear(), agora.getMonth(), 1);
+          break;
+        case 'tudo':
+          dataLimite = new Date(0);
+          break;
+      }
+
+      return vendas.filter(v => v.data >= dataLimite);
+    }
+
+    // Atualizar histórico
+    function atualizarHistorico() {
+      const vendasFiltradas = getVendasFiltradas();
+      const resumo = {};
+
+      vendasFiltradas.forEach(venda => {
+        if (!resumo[venda.sabor]) {
+          resumo[venda.sabor] = { qtd: 0, total: 0, preco: 0 };
+        }
+        resumo[venda.sabor].qtd += venda.qtd;
+        resumo[venda.sabor].total += venda.total;
+        resumo[venda.sabor].preco += venda.preco;
+      });
+
+      // Calcular máximo para normalizar barra
+      const maxQtd = Math.max(...Object.values(resumo).map(r => r.qtd), 1);
+      const maxTotal = Math.max(...Object.values(resumo).map(r => r.total), 1);
+
+      // Gráfico de quantidade
+      let htmlQuantidade = '';
+      Object.entries(resumo)
+        .sort((a, b) => b[1].qtd - a[1].qtd)
+        .forEach(([sabor, dados]) => {
+          const percentual = (dados.qtd / maxQtd) * 100;
+          htmlQuantidade += `
+            <div class="sabor-stat">
+              <span class="stat-label">${sabor}</span>
+              <div class="stat-bar" style="width: ${percentual}%"></div>
+              <span class="stat-value">${dados.qtd} un</span>
+            </div>
+          `;
+        });
+
+      // Gráfico de receita
+      let htmlReceita = '';
+      Object.entries(resumo)
+        .sort((a, b) => b[1].total - a[1].total)
+        .forEach(([sabor, dados]) => {
+          const percentual = (dados.total / maxTotal) * 100;
+          htmlReceita += `
+            <div class="sabor-stat">
+              <span class="stat-label">${sabor}</span>
+              <div class="stat-bar" style="width: ${percentual}%"></div>
+              <span class="stat-value">R$ ${dados.total.toFixed(2)}</span>
+            </div>
+          `;
+        });
+
+      document.getElementById('chartQuantidade').innerHTML = htmlQuantidade || '<p style="text-align: center; color: #999;">Nenhuma venda neste período</p>';
+      document.getElementById('chartReceita').innerHTML = htmlReceita || '<p style="text-align: center; color: #999;">Nenhuma venda neste período</p>';
+
+      // Tabela resumida
+      let htmlTabela = '';
+      Object.entries(resumo)
+        .sort((a, b) => b[1].qtd - a[1].qtd)
+        .forEach(([sabor, dados]) => {
+          const mediaPreco = (dados.total / dados.qtd).toFixed(2);
+          htmlTabela += `
+            <tr>
+              <td><strong>${sabor}</strong></td>
+              <td>${dados.qtd} unidades</td>
+              <td>R$ ${dados.total.toFixed(2)}</td>
+              <td>R$ ${mediaPreco}</td>
+            </tr>
+          `;
+        });
+
+      document.getElementById('tabelaResumo').innerHTML = htmlTabela || '<tr><td colspan="4" style="text-align: center; color: #999;">Nenhuma venda neste período</td></tr>';
+    }
+
     // Salvar dados no localStorage
     function salvarDados() {
-      localStorage.setItem('vendas', JSON.stringify(vendas));
+      const vendasJson = vendas.map(v => ({
+        ...v,
+        data: v.data.toISOString()
+      }));
+      localStorage.setItem('vendas', JSON.stringify(vendasJson));
       localStorage.setItem('caixa', caixa.toString());
     }
 
@@ -434,7 +746,10 @@
       const caixaSalva = localStorage.getItem('caixa');
       
       if (vendasSalvas) {
-        vendas = JSON.parse(vendasSalvas);
+        vendas = JSON.parse(vendasSalvas).map(v => ({
+          ...v,
+          data: new Date(v.data)
+        }));
       }
       if (caixaSalva) {
         caixa = parseFloat(caixaSalva);
