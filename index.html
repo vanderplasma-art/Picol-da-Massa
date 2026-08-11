@@ -18,6 +18,94 @@
       height: 100vh;
     }
 
+    /* LOGIN */
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .login-box h1 {
+      font-size: 32px;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .login-box p {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .login-form input {
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .login-form input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .login-form button {
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: transform 0.2s;
+    }
+
+    .login-form button:hover {
+      transform: scale(1.05);
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    /* MAIN APP */
+    .app-container {
+      display: none;
+      width: 100%;
+      height: 100vh;
+      flex-direction: row;
+    }
+
+    .app-container.show {
+      display: flex;
+    }
+
     /* Menu Lateral */
     .sidebar {
       width: 280px;
@@ -26,6 +114,8 @@
       padding: 20px;
       overflow-y: auto;
       box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
     }
 
     .sidebar h2 {
@@ -53,6 +143,36 @@
       background-color: rgba(255, 255, 255, 0.4);
       border-left-color: #fff;
       font-weight: bold;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .user-info {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+
+    .btn-logout:hover {
+      background-color: rgba(255, 255, 255, 0.3);
     }
 
     /* Container Principal */
@@ -327,7 +447,7 @@
 
     /* Responsivo */
     @media (max-width: 768px) {
-      body {
+      .app-container {
         flex-direction: column;
       }
 
@@ -373,111 +493,135 @@
   </style>
 </head>
 <body>
-  <!-- Menu Lateral -->
-  <div class="sidebar">
-    <h2>🍦 Sabores</h2>
-    <div id="saborMenu"></div>
+  <!-- TELA DE LOGIN -->
+  <div id="loginContainer" class="login-container">
+    <div class="login-box">
+      <h1>🍦 Picolé Vendas</h1>
+      <p>Digite seu email para acessar</p>
+      <form class="login-form" onsubmit="fazerLogin(event)">
+        <input type="email" id="emailInput" placeholder="seu@email.com" required>
+        <button type="submit">Entrar</button>
+        <div id="errorMessage" class="error-message"></div>
+      </form>
+    </div>
   </div>
 
-  <!-- Container Principal -->
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <div class="header-top">
-        <div>
-          <h1>🍦 Controle de Vendas de Picolé</h1>
-          <p>Gerencie suas vendas de forma prática e eficiente</p>
+  <!-- APP PRINCIPAL -->
+  <div id="appContainer" class="app-container">
+    <!-- Menu Lateral -->
+    <div class="sidebar">
+      <h2>🍦 Sabores</h2>
+      <div id="saborMenu"></div>
+      
+      <div class="sidebar-footer">
+        <div class="user-info">
+          👤 Logado como:<br><strong id="userEmail"></strong>
         </div>
-        <div class="header-buttons">
-          <button class="btn-header ativo" onclick="mostrarAbas('vendas')">🏠 Home</button>
-          <button class="btn-header" onclick="mostrarAbas('historico')">📊 Histórico</button>
-        </div>
+        <button class="btn-logout" onclick="fazerLogout()">🚪 Sair</button>
       </div>
     </div>
 
-    <!-- Aba Vendas (Home) -->
-    <div id="vendas" class="content ativo">
-      <!-- Inputs -->
-      <div class="input-group">
-        <label>
-          <span>Sabor</span>
-          <select id="sabor">
-            <option value="">Selecione um sabor</option>
-          </select>
-        </label>
-        <label>
-          <span>Preço (R$)</span>
-          <input id="preco" type="number" step="0.01" placeholder="0.00">
-        </label>
-        <label>
-          <span>Quantidade</span>
-          <input id="quantidade" type="number" placeholder="1">
-        </label>
-        <button onclick="registrarVenda()">Registrar Venda</button>
-      </div>
-
-      <!-- Tabela -->
-      <div class="table-container">
-        <table id="tabela">
-          <thead>
-            <tr>
-              <th>Data/Hora</th>
-              <th>Sabor</th>
-              <th>Qtd</th>
-              <th>Preço Unitário</th>
-              <th>Total</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-
-      <!-- Total -->
-      <div class="total-section">
-        Total do Caixa: 
-        <span>R$ <span id="caixa">0.00</span></span>
-      </div>
-    </div>
-
-    <!-- Aba Histórico -->
-    <div id="historico" class="content">
-      <div class="historico-header">
-        <h2 style="margin-bottom: 15px; text-align: center;">📊 Análise de Vendas</h2>
-        <div class="period-buttons">
-          <button class="period-btn ativo" onclick="filtrarPeriodo('semana')">Última Semana</button>
-          <button class="period-btn" onclick="filtrarPeriodo('mes')">Mês Atual</button>
-          <button class="period-btn" onclick="filtrarPeriodo('tudo')">Todas as Vendas</button>
+    <!-- Container Principal -->
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-top">
+          <div>
+            <h1>🍦 Controle de Vendas de Picolé</h1>
+            <p>Gerencie suas vendas de forma prática e eficiente</p>
+          </div>
+          <div class="header-buttons">
+            <button class="btn-header ativo" onclick="mostrarAbas('vendas')">🏠 Home</button>
+            <button class="btn-header" onclick="mostrarAbas('historico')">📊 Histórico</button>
+          </div>
         </div>
       </div>
 
-      <div class="charts-container">
-        <!-- Gráfico de quantidade por sabor -->
-        <div class="chart-box">
-          <h3>🍦 Quantidade Vendida por Sabor</h3>
-          <div id="chartQuantidade"></div>
+      <!-- Aba Vendas (Home) -->
+      <div id="vendas" class="content ativo">
+        <!-- Inputs -->
+        <div class="input-group">
+          <label>
+            <span>Sabor</span>
+            <select id="sabor">
+              <option value="">Selecione um sabor</option>
+            </select>
+          </label>
+          <label>
+            <span>Preço (R$)</span>
+            <input id="preco" type="number" step="0.01" placeholder="0.00">
+          </label>
+          <label>
+            <span>Quantidade</span>
+            <input id="quantidade" type="number" placeholder="1">
+          </label>
+          <button onclick="registrarVenda()">Registrar Venda</button>
         </div>
 
-        <!-- Gráfico de receita por sabor -->
-        <div class="chart-box">
-          <h3>💰 Faturamento por Sabor</h3>
-          <div id="chartReceita"></div>
+        <!-- Tabela -->
+        <div class="table-container">
+          <table id="tabela">
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Vendedor</th>
+                <th>Sabor</th>
+                <th>Qtd</th>
+                <th>Preço Unitário</th>
+                <th>Total</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- Total -->
+        <div class="total-section">
+          Total do Caixa: 
+          <span>R$ <span id="caixa">0.00</span></span>
         </div>
       </div>
 
-      <!-- Tabela resumida -->
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Sabor</th>
-              <th>Total Vendido (Qtd)</th>
-              <th>Total Faturado (R$)</th>
-              <th>Média de Preço</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaResumo"></tbody>
-        </table>
+      <!-- Aba Histórico -->
+      <div id="historico" class="content">
+        <div class="historico-header">
+          <h2 style="margin-bottom: 15px; text-align: center;">📊 Análise de Vendas</h2>
+          <div class="period-buttons">
+            <button class="period-btn ativo" onclick="filtrarPeriodo('semana')">Última Semana</button>
+            <button class="period-btn" onclick="filtrarPeriodo('mes')">Mês Atual</button>
+            <button class="period-btn" onclick="filtrarPeriodo('tudo')">Todas as Vendas</button>
+          </div>
+        </div>
+
+        <div class="charts-container">
+          <!-- Gráfico de quantidade por sabor -->
+          <div class="chart-box">
+            <h3>🍦 Quantidade Vendida por Sabor</h3>
+            <div id="chartQuantidade"></div>
+          </div>
+
+          <!-- Gráfico de receita por sabor -->
+          <div class="chart-box">
+            <h3>💰 Faturamento por Sabor</h3>
+            <div id="chartReceita"></div>
+          </div>
+        </div>
+
+        <!-- Tabela resumida -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Sabor</th>
+                <th>Total Vendido (Qtd)</th>
+                <th>Total Faturado (R$)</th>
+                <th>Média de Preço</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaResumo"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -497,12 +641,99 @@
       "Pistache"
     ];
 
+    let usuariosPermitidos = [];
+    let usuarioAtual = null;
     let caixa = 0;
     let vendas = [];
     let periodoAtual = 'semana';
 
-    // Inicializar
-    function inicializar() {
+    // Inicializar aplicação
+    function inicializarApp() {
+      carregarUsuariosPermitidos();
+      verificarLogin();
+    }
+
+    // Carregar usuários permitidos do localStorage
+    function carregarUsuariosPermitidos() {
+      const usuarios = localStorage.getItem('usuariosPermitidos');
+      if (usuarios) {
+        usuariosPermitidos = JSON.parse(usuarios);
+      }
+    }
+
+    // Salvar usuários permitidos
+    function salvarUsuariosPermitidos() {
+      localStorage.setItem('usuariosPermitidos', JSON.stringify(usuariosPermitidos));
+    }
+
+    // Fazer login
+    function fazerLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('emailInput').value.trim();
+      const errorMessage = document.getElementById('errorMessage');
+
+      if (!email) {
+        mostrarErro(errorMessage, 'Digite um email válido');
+        return;
+      }
+
+      // Verificar se usuário já existe
+      if (!usuariosPermitidos.includes(email)) {
+        // Se ainda há espaço (máximo 3), adicionar novo usuário
+        if (usuariosPermitidos.length < 3) {
+          usuariosPermitidos.push(email);
+          salvarUsuariosPermitidos();
+        } else {
+          mostrarErro(errorMessage, 'Máximo de 3 usuários atingido. Entre com um email já registrado.');
+          return;
+        }
+      }
+
+      // Salvar usuário atual
+      usuarioAtual = email;
+      localStorage.setItem('usuarioAtual', email);
+
+      // Limpar erro e mostrar app
+      errorMessage.classList.remove('show');
+      document.getElementById('loginContainer').style.display = 'none';
+      document.getElementById('appContainer').classList.add('show');
+      document.getElementById('userEmail').textContent = email;
+
+      // Inicializar app
+      inicializarSistema();
+    }
+
+    // Fazer logout
+    function fazerLogout() {
+      if (confirm('Deseja sair?')) {
+        usuarioAtual = null;
+        localStorage.removeItem('usuarioAtual');
+        document.getElementById('appContainer').classList.remove('show');
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('emailInput').value = '';
+      }
+    }
+
+    // Mostrar erro
+    function mostrarErro(element, mensagem) {
+      element.textContent = mensagem;
+      element.classList.add('show');
+    }
+
+    // Verificar login
+    function verificarLogin() {
+      const usuarioSalvo = localStorage.getItem('usuarioAtual');
+      if (usuarioSalvo && usuariosPermitidos.includes(usuarioSalvo)) {
+        usuarioAtual = usuarioSalvo;
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('appContainer').classList.add('show');
+        document.getElementById('userEmail').textContent = usuarioSalvo;
+        inicializarSistema();
+      }
+    }
+
+    // Inicializar sistema
+    function inicializarSistema() {
       preencherMenu();
       preencherSelectSabores();
       carregarDados();
@@ -510,14 +741,11 @@
 
     // Mostrar abas
     function mostrarAbas(aba) {
-      // Esconder todos os conteúdos
       document.querySelectorAll('.content').forEach(el => el.classList.remove('ativo'));
       document.querySelectorAll('.btn-header').forEach(el => el.classList.remove('ativo'));
 
-      // Mostrar conteúdo selecionado
       document.getElementById(aba).classList.add('ativo');
       
-      // Ativar botão clicado
       if (aba === 'vendas') {
         document.querySelectorAll('.btn-header')[0].classList.add('ativo');
       } else if (aba === 'historico') {
@@ -574,6 +802,7 @@
       const venda = {
         id: Date.now(),
         data: new Date(),
+        vendedor: usuarioAtual,
         sabor,
         qtd,
         preco,
@@ -608,7 +837,7 @@
       tbody.innerHTML = '';
 
       if (vendas.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#999;">Nenhuma venda registrada</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#999;">Nenhuma venda registrada</td></tr>';
         document.getElementById('caixa').textContent = '0.00';
         return;
       }
@@ -616,6 +845,7 @@
       vendas.forEach(venda => {
         const linha = tbody.insertRow();
         linha.insertCell().textContent = venda.data.toLocaleString('pt-BR');
+        linha.insertCell().textContent = venda.vendedor;
         linha.insertCell().textContent = venda.sabor;
         linha.insertCell().textContent = venda.qtd;
         linha.insertCell().textContent = venda.preco.toFixed(2);
@@ -676,11 +906,9 @@
         resumo[venda.sabor].preco += venda.preco;
       });
 
-      // Calcular máximo para normalizar barra
       const maxQtd = Math.max(...Object.values(resumo).map(r => r.qtd), 1);
       const maxTotal = Math.max(...Object.values(resumo).map(r => r.total), 1);
 
-      // Gráfico de quantidade
       let htmlQuantidade = '';
       Object.entries(resumo)
         .sort((a, b) => b[1].qtd - a[1].qtd)
@@ -695,7 +923,6 @@
           `;
         });
 
-      // Gráfico de receita
       let htmlReceita = '';
       Object.entries(resumo)
         .sort((a, b) => b[1].total - a[1].total)
@@ -713,7 +940,6 @@
       document.getElementById('chartQuantidade').innerHTML = htmlQuantidade || '<p style="text-align: center; color: #999;">Nenhuma venda neste período</p>';
       document.getElementById('chartReceita').innerHTML = htmlReceita || '<p style="text-align: center; color: #999;">Nenhuma venda neste período</p>';
 
-      // Tabela resumida
       let htmlTabela = '';
       Object.entries(resumo)
         .sort((a, b) => b[1].qtd - a[1].qtd)
@@ -732,7 +958,7 @@
       document.getElementById('tabelaResumo').innerHTML = htmlTabela || '<tr><td colspan="4" style="text-align: center; color: #999;">Nenhuma venda neste período</td></tr>';
     }
 
-    // Salvar dados no localStorage
+    // Salvar dados
     function salvarDados() {
       const vendasJson = vendas.map(v => ({
         ...v,
@@ -742,7 +968,7 @@
       localStorage.setItem('caixa', caixa.toString());
     }
 
-    // Carregar dados do localStorage
+    // Carregar dados
     function carregarDados() {
       const vendasSalvas = localStorage.getItem('vendas');
       const caixaSalva = localStorage.getItem('caixa');
@@ -761,7 +987,7 @@
     }
 
     // Iniciar ao carregar
-    window.addEventListener('load', inicializar);
+    window.addEventListener('load', inicializarApp);
   </script>
 </body>
 </html>
